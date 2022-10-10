@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  wp:
+    image: wordpress:6.0.1
+    depends_on:
+      - db
+    ports:
+      - 8080:80
+    volumes:
+      #- ./wordpress/content/wp-content:/var/www/html/wp-content
+      - ./wordpress/wp-config-docker.php:/var/www/html/wp-config.php
+      - ./wordpress/Search-Replace-DB:/var/www/html/Search-Replace-DB
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wp
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: wp_user
+      WORDPRESS_DEBUG : 1
+
+  db:
+    image: mariadb:10.3.36
+    platform: linux/x86_64
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/mysql/initdb:/docker-entrypoint-initdb.d
+      - ./docker/mysql/data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: wp
+      MYSQL_USER: wp_user
+      MYSQL_PASSWORD: wp_user
+      MYSQL_ROOT_PASSWORD: root
+
+volumes:
+  db_data:
+
